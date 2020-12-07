@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace chinook.AsyncWebView
+namespace Chinook.AsyncWebView
 {
 	public static class StringExtensions
 	{

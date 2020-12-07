@@ -7,7 +7,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using _WebView = Windows.UI.Xaml.Controls.WebView;
 
-namespace chinook.AsyncWebView
+namespace Chinook.AsyncWebView
 {
 	/// <summary>
 	/// Encapsulates extensions for webview
