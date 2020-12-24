@@ -5,7 +5,7 @@ using Foundation;
 using Microsoft.Extensions.Logging;
 using WebKit;
 
-namespace chinook.AsyncWebView
+namespace Chinook.AsyncWebView
 {
 	/// <summary>
 	/// Implementation of <see cref="AsyncWebView"/> for iOS

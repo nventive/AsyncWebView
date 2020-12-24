@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
-namespace chinook.AsyncWebView
+namespace Chinook.AsyncWebView
 {
 	/// <summary>
 	/// Implementation of <see cref="AsyncWebView"/> for Android
