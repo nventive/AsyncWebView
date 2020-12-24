@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Windows.UI.Xaml.Controls;
 using Windows.Web.Http.Filters;
 
-namespace chinook.AsyncWebView
+namespace Chinook.AsyncWebView
 {
 	/// <summary>
 	/// Implementation of <see cref="AsyncWebView"/> for Windows

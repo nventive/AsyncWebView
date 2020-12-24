@@ -1,4 +1,4 @@
-﻿namespace chinook.AsyncWebView
+﻿namespace Chinook.AsyncWebView
 {
 	/// <summary>
 	/// Specifies how links inside the AsyncWebView should be opened.

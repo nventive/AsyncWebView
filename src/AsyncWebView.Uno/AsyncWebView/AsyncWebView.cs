@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Controls;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Linq;
 
-namespace chinook.AsyncWebView
+namespace Chinook.AsyncWebView
 {
 	/// <summary>
 	/// Encapsulates a WebView control and adds multiple navigation handling scenarios.

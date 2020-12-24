@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Trigger = System.Tuple<chinook.AsyncWebView.ControlState, chinook.AsyncWebView.ControlState, System.Action>;
+using Trigger = System.Tuple<Chinook.AsyncWebView.ControlState, Chinook.AsyncWebView.ControlState, System.Action>;
 
-namespace chinook.AsyncWebView
+namespace Chinook.AsyncWebView
 {
 	internal partial class ControlStateManager
 	{

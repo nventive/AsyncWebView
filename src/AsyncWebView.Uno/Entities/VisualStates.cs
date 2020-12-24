@@ -1,4 +1,4 @@
-﻿namespace chinook.AsyncWebView
+﻿namespace Chinook.AsyncWebView
 {
 	public static class VisualStates
 	{
