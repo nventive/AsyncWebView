@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Chinook.AsyncWebView
+namespace AsyncWebView
 {
 	/// <summary>
 	/// Implementation of <see href="AsyncWebView" /> active commands

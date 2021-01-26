@@ -9,7 +9,7 @@ using Windows.Web.Http;
 using System.Net.Http;
 #endif
 
-namespace Chinook.AsyncWebView
+namespace AsyncWebView
 {
 	/// <summary>
 	/// Implementation of <see cref="AsyncWebView"/> properties
