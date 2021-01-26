@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 
-namespace Chinook.AsyncWebView
+namespace AsyncWebView
 {
 	internal class WebViewCommand : ICommand
 	{

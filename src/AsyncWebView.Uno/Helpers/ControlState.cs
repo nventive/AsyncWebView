@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Chinook.AsyncWebView
+namespace AsyncWebView
 {
 	[Flags]
 	internal enum ControlState

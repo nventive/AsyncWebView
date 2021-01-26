@@ -1,4 +1,4 @@
-﻿namespace Chinook.AsyncWebView
+﻿namespace AsyncWebView
 {
 	public static class AsyncWebViewConstants
 	{

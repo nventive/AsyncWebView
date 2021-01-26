@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Chinook.AsyncWebView
+namespace AsyncWebView
 {
 	/// <summary>
 	/// Implementation of <see cref="AsyncWebView" /> for WASM.
