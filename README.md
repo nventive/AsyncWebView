@@ -1,4 +1,4 @@
-# Chinook.AsyncWebView
+# AsyncWebView
 
 {Project tag line}
 
