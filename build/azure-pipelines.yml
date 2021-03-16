@@ -6,7 +6,7 @@ trigger:
 resources:
    containers:
      - container: windows
-       image: nventive/build-agent:vs16.4.0
+       image: nventive/vs_build-tools:16.8.6
 
 variables:
 - name: NUGET_VERSION
@@ -17,6 +17,9 @@ variables:
   value: Packages
 - name: SolutionFileName # Example: MyApplication.sln
   value: AsyncWebView.sln
+# Pool names
+- name: windowsPoolName
+  value: 'windows 1809'
 
 stages:
 - stage: Build
@@ -31,7 +34,7 @@ stages:
           GeneratePackageOnBuild: true
 
     pool:
-      name: Container
+      name: $(windowsPoolName)
 
     variables:
     - name: PackageOutputPath # Path where nuget packages will be copied to.
@@ -52,7 +55,7 @@ stages:
   - job: Publish_NuGet_Internal
 
     pool:
-      name: Container
+      name: $(windowsPoolName)
 
     workspace:
       clean: all # Cleanup the workspaca before starting
