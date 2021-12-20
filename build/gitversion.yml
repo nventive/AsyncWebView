@@ -19,7 +19,7 @@ branches:
     increment: none
     source-branches: [master]
   feature:
-    tag: ^feature.{BranchName}
+    tag: feature.{BranchName}
     regex: feature/(.*?)
     source-branches: ['master']
     increment: none

@@ -19,7 +19,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Uno.UI" Version="3.1.0-beta.84" />
+    <PackageReference Include="Uno.UI" Version="4.0.7" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.7" />
+		<PackageReference Include="Uno.Core" Version="4.0.1" />
   </ItemGroup>
 </Project>
