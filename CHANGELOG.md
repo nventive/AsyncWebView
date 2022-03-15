@@ -8,9 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 * Support for Android 11 (March, 2021)
-* [#23] Change target Uno.UI version to 4.0.7.
 ### Changed
-
+* [#23] Change target Uno.UI version to 4.0.7.
 ### Deprecated
 
 ### Removed
