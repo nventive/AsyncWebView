@@ -36,7 +36,7 @@ namespace AsyncWebView
 		private static readonly Uri _blankPageUri = new Uri("about:blank");
 
 		private readonly ControlStateManager _state = new ControlStateManager();
-		private readonly CoreDispatcher _dispatcher;
+		private readonly DispatcherQueue _dispatcher;
 		private readonly ILogger _logger;
 
 		private _WebView _webView;
@@ -109,7 +109,7 @@ namespace AsyncWebView
 
 			if (IsClearingOnUnload)
 			{
-				_ = _dispatcher.RunTaskAsync(CoreDispatcherPriority.Normal, async () =>
+				_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () =>
 				{
 					try
 					{
@@ -280,7 +280,7 @@ namespace AsyncWebView
 
 		private void NavigateToMessage(HttpRequestMessage message)
 		{
-			_ = _dispatcher.RunTaskAsync(CoreDispatcherPriority.Normal, async () =>
+			_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () =>
 			{
 				try
 				{
@@ -298,7 +298,7 @@ namespace AsyncWebView
 
 		private void NavigateToString(string content)
 		{
-			_ = _dispatcher.RunTaskAsync(CoreDispatcherPriority.Normal, async () =>
+			_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () =>
 			{
 				try
 				{
@@ -316,7 +316,7 @@ namespace AsyncWebView
 
 		private void NavigateToUri(Uri uri)
 		{
-			_ = _dispatcher.RunTaskAsync(CoreDispatcherPriority.Normal, async () =>
+			_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () =>
 			{
 				try
 				{
@@ -342,7 +342,7 @@ namespace AsyncWebView
 			}
 
 			_ = _dispatcher.RunTaskAsync(
-					CoreDispatcherPriority.Normal,
+					DispatcherQueuePriority.Normal,
 					async () => await Launcher.LaunchUriAsync(uri)
 				);
 
@@ -355,7 +355,7 @@ namespace AsyncWebView
 			_webView.NavigationCompleted += OnNavigationCompletedEvent;
 			_webView.NavigationFailed += OnNavigationFailedEvent;
 
-#if WINDOWS_UWP
+#if WINUI
 			_webView.ScriptNotify += OnScriptNotifyEvent;
 #endif
 
@@ -365,7 +365,7 @@ namespace AsyncWebView
 				_webView.NavigationCompleted -= OnNavigationCompletedEvent;
 				_webView.NavigationFailed -= OnNavigationFailedEvent;
 
-#if WINDOWS_UWP
+#if WINUI
 				_webView.ScriptNotify -= OnScriptNotifyEvent;
 #endif
 			});
@@ -390,7 +390,7 @@ namespace AsyncWebView
 			(GoForwardCommand as WebViewCommand)?.RaiseCanExecuteChanged();
 		}
 
-#if WINDOWS_UWP
+#if WINUI
 		private void OnScriptNotifyEvent(object sender, NotifyEventArgs args)
 		{
 			ProcessScriptNotification(args);
@@ -442,11 +442,11 @@ namespace AsyncWebView
 
 					if (NavigationMode == NavigationMode.Application)
 					{
-						_ = _dispatcher.RunTaskAsync(CoreDispatcherPriority.Normal, async () => await NavigateUsingApplication(args.Uri));
+						_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () => await NavigateUsingApplication(args.Uri));
 					}
 					else if (NavigationMode == NavigationMode.External)
 					{
-						_ = _dispatcher.RunTaskAsync(CoreDispatcherPriority.Normal, async () => await NavigateUsingExternalBrowser(args.Uri));
+						_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () => await NavigateUsingExternalBrowser(args.Uri));
 					}
 
 					return;
@@ -488,7 +488,7 @@ namespace AsyncWebView
 				_logger.LogDebug($"Navigating to uri '{uri?.AbsoluteUri}' using external browser.");
 			}
 
-			await _dispatcher.RunTaskAsync(CoreDispatcherPriority.Normal, () => Launcher.LaunchUriAsync(uri).AsTask());
+			await _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, () => Launcher.LaunchUriAsync(uri).AsTask());
 
 			if (_logger.IsEnabled(LogLevel.Information))
 			{
@@ -606,7 +606,7 @@ namespace AsyncWebView
 			arguments = arguments.Skip(1).ToArray();
 #endif
 
-#if __ANDROID__ || __IOS__ || WINDOWS_UWP
+#if __ANDROID__ || __IOS__
 			var result = await _webView.InvokeScriptAsync(script, arguments);
 #else
 			var result = await _webView.InvokeScriptAsync(script, arguments).AsTask();

@@ -2,24 +2,25 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.UI.Dispatching;
 
-namespace Windows.UI.Core
+namespace Windows.UI.Dispatching
 {
 	/// <summary>
 	/// Extension methods for classes in the Windows.UI.Core namespace.
 	/// </summary>
-	internal static class CoreDispatcherExtensions
+	internal static class DispatcherQueueExtensions
 	{
 		/// <summary>
-		/// This method allows for executing an async Task on the CoreDispatcher.
+		/// This method allows for executing an async Task on the DispatcherQueue.
 		/// </summary>
-		/// <param name="coreDispatcher"></param>
+		/// <param name="dispatcherQueue"></param>
 		/// <param name="priority"></param>
 		/// <param name="asyncAction">The async operation.</param>
-		internal static async Task RunTaskAsync(this CoreDispatcher coreDispatcher, CoreDispatcherPriority priority, Func<Task> asyncAction)
+		internal static async Task RunTaskAsync(this DispatcherQueue dispatcherQueue, DispatcherQueuePriority priority, Func<Task> asyncAction)
 		{
 			var completion = new TaskCompletionSource<bool>();
-			await coreDispatcher.RunAsync(priority, RunActionUI);
+			await dispatcherQueue.RunAsync(priority, RunActionUI);
 			await completion.Task;
 
 			async void RunActionUI()
@@ -37,16 +38,16 @@ namespace Windows.UI.Core
 		}
 
 		/// <summary>
-		/// This method allows for executing an async Task with result on the CoreDispatcher.
+		/// This method allows for executing an async Task with result on the DispatcherQueue.
 		/// </summary>
 		/// <typeparam name="TResult"></typeparam>
-		/// <param name="coreDispatcher"></param>
+		/// <param name="dispatcherQueue"></param>
 		/// <param name="priority"></param>
 		/// <param name="asyncFunc">The async operation.</param>
-		internal static async Task<TResult> RunTaskAsync<TResult>(this CoreDispatcher coreDispatcher, CoreDispatcherPriority priority, Func<Task<TResult>> asyncFunc)
+		internal static async Task<TResult> RunTaskAsync<TResult>(this DispatcherQueue dispatcherQueue, DispatcherQueuePriority priority, Func<Task<TResult>> asyncFunc)
 		{
 			var completion = new TaskCompletionSource<TResult>();
-			await coreDispatcher.RunAsync(priority, RunActionUI);
+			await dispatcherQueue.RunAsync(priority, RunActionUI);
 			return await completion.Task;
 
 			async void RunActionUI()
