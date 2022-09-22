@@ -5,7 +5,11 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using _WebView2 = Microsoft.UI.Xaml.Controls.WebView2;
+#if __ANDROID__ || __IOS__ || __WASM__
+using _WebView = Microsoft.UI.Xaml.Controls.WebView;
+#else
+using _WebView = Microsoft.UI.Xaml.Controls.WebView2;
+#endif
 
 namespace AsyncWebView
 {
@@ -25,7 +29,7 @@ namespace AsyncWebView
 		/// </summary>
 		/// <param name="obj">Webview</param>
 		/// <returns>Source string</returns>
-		public static string GetSourceString(_WebView2 obj)
+		public static string GetSourceString(_WebView obj)
 		{
 			return (string)obj.GetValue(SourceStringProperty);
 		}
@@ -35,28 +39,32 @@ namespace AsyncWebView
 		/// </summary>
 		/// <param name="obj">Webview</param>
 		/// <param name="value">Source string</param>
-		public static void SetSourceString(_WebView2 obj, string value)
+		public static void SetSourceString(_WebView obj, string value)
 		{
 			obj.SetValue(SourceStringProperty, value);
 		}
 
 		private static void OnSourceStringChanged(object d, DependencyPropertyChangedEventArgs e)
 		{
-			(d as _WebView2).NavigateToString(e.NewValue.ToString());
+			(d as _WebView).NavigateToString(e.NewValue.ToString());
 		}
 
 #if WINUI
 		/// <summary>
 		/// Invokes scripts
 		/// </summary>
-		/// <param name="webView2">Web view</param>
+		/// <param name="webView">Web view</param>
 		/// <param name="ct">Cancellation token</param>
 		/// <param name="script">Script</param>
 		/// <param name="arguments">Script agruments</param>
 		/// <returns>void</returns>
-		public static async Task<string> InvokeScriptAsync(this _WebView2 webView2, CancellationToken ct, string script)
+		public static async Task<string> InvokeScriptAsync(this _WebView webView, CancellationToken ct, string script, string[] arguments)
 		{
-			return await webView2.ExecuteScriptAsync(script).AsTask(ct);
+#if __ANDROID__ || __IOS__ || __WASM__
+			return await webView.InvokeScriptAsync(script, arguments).AsTask(ct);
+#else
+			return await webView.InvokeScriptAsync(ct, script, arguments);
+#endif
 		}
 #endif
 	}

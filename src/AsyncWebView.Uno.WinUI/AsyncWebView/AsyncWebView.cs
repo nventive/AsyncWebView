@@ -11,13 +11,18 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Linq;
+#if __ANDROID__ || __IOS__ || __WASM__
+using _WebView = Microsoft.UI.Xaml.Controls.WebView;
+#else
+using _WebView = Microsoft.UI.Xaml.Controls.WebView2;
+#endif
 
 namespace AsyncWebView
 {
 	/// <summary>
 	/// Encapsulates a WebView control and adds multiple navigation handling scenarios.
 	/// </summary>
-	[TemplatePart(Name = WebViewPartName, Type = typeof(WebView2))]
+	[TemplatePart(Name = WebViewPartName, Type = typeof(_WebView))]
 	[TemplateVisualState(Name = VisualStates.Loading)]
 	[TemplateVisualState(Name = VisualStates.Refreshing)]
 	[TemplateVisualState(Name = VisualStates.Navigating)]
@@ -34,7 +39,7 @@ namespace AsyncWebView
 		private readonly CoreDispatcher _dispatcher;
 		private readonly ILogger _logger;
 
-		private WebView2 _webView2;
+		private _WebView _webView;
 		private bool _isUpdating;
 		private bool _isLastErrorOnSource;
 		private bool _isNavigating;
@@ -73,7 +78,7 @@ namespace AsyncWebView
 		{
 			base.OnApplyTemplate();
 
-			_webView2 = GetTemplateChild(WebViewPartName) as WebView2 ?? throw new ArgumentNullException(WebViewPartName);
+			_webView = GetTemplateChild(WebViewPartName) as _WebView ?? throw new ArgumentNullException(WebViewPartName);
 
 			_state.SetState(ControlState.Templated);
 		}
@@ -366,7 +371,7 @@ namespace AsyncWebView
 			});
 		}
 
-		private void OnNavigationCompletedEvent(WebView sender, WebViewNavigationCompletedEventArgs args)
+		private void OnNavigationCompletedEvent(_WebView sender, WebViewNavigationCompletedEventArgs args)
 		{
 			(GoBackCommand as WebViewCommand)?.RaiseCanExecuteChanged();
 			(GoForwardCommand as WebViewCommand)?.RaiseCanExecuteChanged();
@@ -374,7 +379,7 @@ namespace AsyncWebView
 			ProcessNavigationCompleted(args);
 		}
 
-		private void OnNavigationgStartingEvent(WebView sender, WebViewNavigationStartingEventArgs args)
+		private void OnNavigationgStartingEvent(_WebView sender, WebViewNavigationStartingEventArgs args)
 		{
 			ProcessNavigationStarting(args);
 		}
