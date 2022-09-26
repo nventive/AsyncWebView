@@ -1,4 +1,4 @@
-﻿#if WINUI
+﻿#if WINDOWS10_0_18362_0_OR_GREATER
 using System;
 using System.Threading;
 using System.Threading.Tasks;

@@ -1,12 +1,10 @@
-﻿#if WINUI || __ANDROID__ || __IOS__ || __WASM__
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Logging;
-using Windows.System;
 using System.Net.Http;
-using Windows.UI.Core;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -280,7 +278,7 @@ namespace AsyncWebView
 
 		private void NavigateToMessage(HttpRequestMessage message)
 		{
-			_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () =>
+			_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () =>
 			{
 				try
 				{
@@ -298,7 +296,7 @@ namespace AsyncWebView
 
 		private void NavigateToString(string content)
 		{
-			_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () =>
+			_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () =>
 			{
 				try
 				{
@@ -316,7 +314,7 @@ namespace AsyncWebView
 
 		private void NavigateToUri(Uri uri)
 		{
-			_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () =>
+			_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () =>
 			{
 				try
 				{
@@ -620,4 +618,3 @@ namespace AsyncWebView
 		}
 	}
 }
-#endif
