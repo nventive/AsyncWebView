@@ -1,4 +1,4 @@
-﻿#if WINUI || __ANDROID__ || __IOS__ || __WASM__
+﻿#if WINDOWS || __ANDROID__ || __IOS__
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,7 +49,7 @@ namespace AsyncWebView
 			(d as _WebView).NavigateToString(e.NewValue.ToString());
 		}
 
-#if WINUI
+#if WINDOWS
 		/// <summary>
 		/// Invokes scripts
 		/// </summary>
@@ -60,7 +60,7 @@ namespace AsyncWebView
 		/// <returns>void</returns>
 		public static async Task<string> InvokeScriptAsync(this _WebView webView, CancellationToken ct, string script, string[] arguments)
 		{
-#if __ANDROID__ || __IOS__ || __WASM__
+#if __ANDROID__ || __IOS__
 			return await webView.InvokeScriptAsync(script, arguments).AsTask(ct);
 #else
 			return await webView.InvokeScriptAsync(ct, script, arguments);

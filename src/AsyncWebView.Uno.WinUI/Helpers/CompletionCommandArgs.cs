@@ -1,4 +1,4 @@
-﻿#if WINUI || __ANDROID__ || __IOS__ || __WASM__
+﻿#if WINDOWS || __ANDROID__ || __IOS__
 using System;
 using System.Threading;
 using System.Threading.Tasks;

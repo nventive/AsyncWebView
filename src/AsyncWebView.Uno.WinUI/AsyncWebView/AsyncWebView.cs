@@ -1,18 +1,30 @@
-﻿using System;
+﻿#if WINDOWS || __ANDROID__ || __IOS__
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Logging;
+using Windows.System;
 using System.Net.Http;
 using Microsoft.UI.Dispatching;
+using DispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue;
+using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Linq;
-#if __ANDROID__ || __IOS__ || __WASM__
+using Uno.Disposables;
+#if __ANDROID__ || __IOS__
 using _WebView = Microsoft.UI.Xaml.Controls.WebView;
+using NavigationStartingEventArgs = Microsoft.UI.Xaml.Controls.WebViewNavigationStartingEventArgs;
+using NavigationCompletedEventArgs = Microsoft.UI.Xaml.Controls.WebViewNavigationCompletedEventArgs;
+using NavigationFailedEventArgs = Microsoft.UI.Xaml.Controls.WebViewNavigationFailedEventArgs;
 #else
+using Microsoft.Web.WebView2.Core;
 using _WebView = Microsoft.UI.Xaml.Controls.WebView2;
+using NavigationStartingEventArgs = Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs;
+using NavigationCompletedEventArgs = Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs;
+using NavigationFailedEventArgs = Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs;
 #endif
 
 namespace AsyncWebView
@@ -61,7 +73,7 @@ namespace AsyncWebView
 			DefaultStyleKey = typeof(AsyncWebView);
 			
 			_logger = Logger ?? NullLogger<AsyncWebView>.Instance;
-			_dispatcher = Dispatcher;
+			_dispatcher = DispatcherQueue;
 
 			Loaded += OnLoaded;
 			Unloaded += OnUnloaded;
@@ -107,7 +119,7 @@ namespace AsyncWebView
 
 			if (IsClearingOnUnload)
 			{
-				_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () =>
+				_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () =>
 				{
 					try
 					{
@@ -143,27 +155,35 @@ namespace AsyncWebView
 			VisualStateManager.GoToState(this, name, true);
 		}
 
-		protected virtual bool OnNavigationStarting(WebViewNavigationStartingEventArgs args)
+		protected virtual bool OnNavigationStarting(NavigationStartingEventArgs args)
 		{
 			if (_logger.IsEnabled(LogLevel.Trace))
 			{
+#if WINDOWS
+				_logger.Trace($"Navigation to uri '{args?.Uri}' is starting.");
+#else
 				_logger.Trace($"Navigation to uri '{args?.Uri?.AbsoluteUri}' is starting.");
+#endif
 			}
 
 			return true;
 		}
 
-		protected virtual void OnNavigationSucceeded(WebViewNavigationCompletedEventArgs args)
+		protected virtual void OnNavigationSucceeded(NavigationCompletedEventArgs args)
 		{
 			UpdateVisualState(VisualStates.Ready);
 
 			if (_logger.IsEnabled(LogLevel.Information))
 			{
+#if WINDOWS
+				_logger.LogInformation($"The navigation to uri '{_webView?.BaseUri?.AbsoluteUri}' has succeeded.");
+#else
 				_logger.LogInformation($"The navigation to uri '{args?.Uri?.AbsoluteUri}' has succeeded.");
+#endif
 			}
 		}
 
-		protected virtual void OnNavigationFailed(WebViewNavigationCompletedEventArgs args)
+		protected virtual void OnNavigationFailed(NavigationCompletedEventArgs args)
 		{
 			var isNetworkAvailable = IsNetworkAvailableSourceProvider?.Invoke() ?? true;
 
@@ -171,22 +191,35 @@ namespace AsyncWebView
 
 			if (_logger.IsEnabled(LogLevel.Error))
 			{
+#if WINDOWS
+				_logger.LogError($"The navigation to uri '{_webView?.BaseUri?.AbsoluteUri}' failed due to '{args?.WebErrorStatus}'.");
+#else
 				_logger.LogError($"The navigation to uri '{args?.Uri?.AbsoluteUri}' failed due to '{args?.WebErrorStatus}'.");
+#endif
 			}
 		}
 
-		protected virtual void OnNavigationCompleted(WebViewNavigationCompletedEventArgs args)
+		protected virtual void OnNavigationCompleted(NavigationCompletedEventArgs args)
 		{
 			if (_logger.IsEnabled(LogLevel.Debug))
 			{
+#if WINDOWS
+				_logger.LogDebug($"Handling the completed navigation to uri '{_webView?.BaseUri?.AbsoluteUri}'.");
+#else
 				_logger.LogDebug($"Handling the completed navigation to uri '{args?.Uri?.AbsoluteUri}'.");
+#endif
 			}
 
 			if (CompletionCommand != null)
 			{
 				// We cannot use WebViewNavigationCompletedEventArgs directly, as it must be called from the UI Thread on Windows
 				// The WebErrorStatus field is not provided, as it uses a different namespace in Uno and Windows.
-				var commandArgs = new CompletionCommandArgs(this, args.IsSuccess, args.Uri);
+				var commandArgs = new CompletionCommandArgs(this, args.IsSuccess,
+#if WINDOWS
+					_webView.BaseUri);
+#else
+					args.Uri);
+#endif
 
 				if (CompletionCommand.CanExecute(commandArgs))
 				{
@@ -195,7 +228,11 @@ namespace AsyncWebView
 
 				if (_logger.IsEnabled(LogLevel.Information))
 				{
+#if WINDOWS
+					_logger.LogInformation($"Handled the completed navigation to uri '{_webView?.BaseUri?.AbsoluteUri}'.");
+#else
 					_logger.LogInformation($"Handled the completed navigation to uri '{args?.Uri?.AbsoluteUri}'.");
+#endif
 				}
 			}
 		}
@@ -282,7 +319,11 @@ namespace AsyncWebView
 			{
 				try
 				{
+#if WINDOWS
+					_webView?.NavigateToString(message.RequestUri.OriginalString);
+#else
 					_webView?.NavigateWithHttpRequestMessage(message);
+#endif
 				}
 				catch (Exception e)
 				{
@@ -318,7 +359,11 @@ namespace AsyncWebView
 			{
 				try
 				{
+#if WINDOWS
+					_webView?.NavigateToString(uri.OriginalString);
+#else
 					_webView?.Navigate(uri);
+#endif
 				}
 				catch (Exception e)
 				{
@@ -351,25 +396,33 @@ namespace AsyncWebView
 		{
 			_webView.NavigationStarting += OnNavigationgStartingEvent;
 			_webView.NavigationCompleted += OnNavigationCompletedEvent;
+#if WINDOWS
+			_webView.CoreProcessFailed += OnNavigationFailedEvent;
+#else
 			_webView.NavigationFailed += OnNavigationFailedEvent;
+#endif
 
-#if WINUI
-			_webView.ScriptNotify += OnScriptNotifyEvent;
+#if WINDOWS
+			_webView.CoreWebView2.ScriptDialogOpening += OnScriptNotifyEvent;
 #endif
 
 			return Disposable.Create(() =>
 			{
 				_webView.NavigationStarting -= OnNavigationgStartingEvent;
 				_webView.NavigationCompleted -= OnNavigationCompletedEvent;
+#if WINDOWS
+				_webView.CoreProcessFailed -= OnNavigationFailedEvent;
+#else
 				_webView.NavigationFailed -= OnNavigationFailedEvent;
+#endif
 
-#if WINUI
-				_webView.ScriptNotify -= OnScriptNotifyEvent;
+#if WINDOWS
+				_webView.CoreWebView2.ScriptDialogOpening -= OnScriptNotifyEvent;
 #endif
 			});
 		}
 
-		private void OnNavigationCompletedEvent(_WebView sender, WebViewNavigationCompletedEventArgs args)
+		private void OnNavigationCompletedEvent(_WebView sender, NavigationCompletedEventArgs args)
 		{
 			(GoBackCommand as WebViewCommand)?.RaiseCanExecuteChanged();
 			(GoForwardCommand as WebViewCommand)?.RaiseCanExecuteChanged();
@@ -377,26 +430,26 @@ namespace AsyncWebView
 			ProcessNavigationCompleted(args);
 		}
 
-		private void OnNavigationgStartingEvent(_WebView sender, WebViewNavigationStartingEventArgs args)
+		private void OnNavigationgStartingEvent(_WebView sender, NavigationStartingEventArgs args)
 		{
 			ProcessNavigationStarting(args);
 		}
 
-		private void OnNavigationFailedEvent(object sender, WebViewNavigationFailedEventArgs e)
+		private void OnNavigationFailedEvent(object sender, NavigationFailedEventArgs e)
 		{
 			(GoBackCommand as WebViewCommand)?.RaiseCanExecuteChanged();
 			(GoForwardCommand as WebViewCommand)?.RaiseCanExecuteChanged();
 		}
 
-#if WINUI
-		private void OnScriptNotifyEvent(object sender, NotifyEventArgs args)
+#if WINDOWS
+		private void OnScriptNotifyEvent(object sender, CoreWebView2ScriptDialogOpeningEventArgs args)
 		{
 			ProcessScriptNotification(args);
 		}
 #endif
 
 		// This method has to be synchronous. Otherwise, changing the args.Cancel has no effect since it's evaluated synchronously.
-		private void ProcessNavigationStarting(WebViewNavigationStartingEventArgs args)
+		private void ProcessNavigationStarting(NavigationStartingEventArgs args)
 		{
 			var shouldStopNavigation = !OnNavigationStarting(args);
 			if (shouldStopNavigation)
@@ -411,7 +464,11 @@ namespace AsyncWebView
 				return;
 			}
 
+#if WINDOWS
+			var absoluteUri = _webView.BaseUri.AbsoluteUri;
+#else
 			var absoluteUri = args.Uri.AbsoluteUri;
+#endif
 
 			// We always ignore starting a navigation to about:blank.
 			if (absoluteUri.Equals(_blankPageUri.AbsoluteUri, StringComparison.OrdinalIgnoreCase))
@@ -422,7 +479,11 @@ namespace AsyncWebView
 			// If the Uri is an action type ("tel:", "mailto:", etc), we ignore the navigation and open the appropriate app if any.
 			if (absoluteUri.IsUrlAction())
 			{
+#if WINDOWS
+				var isSchemeSupported = HandleLinkWithScheme(_webView.BaseUri);
+#else
 				var isSchemeSupported = HandleLinkWithScheme(args.Uri);
+#endif
 
 				// If action type was handled, cancel navigation
 				if (isSchemeSupported)
@@ -440,11 +501,21 @@ namespace AsyncWebView
 
 					if (NavigationMode == NavigationMode.Application)
 					{
-						_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () => await NavigateUsingApplication(args.Uri));
+						_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () => await NavigateUsingApplication(
+#if WINDOWS
+							_webView.BaseUri));
+#else
+							args.Uri));
+#endif
 					}
 					else if (NavigationMode == NavigationMode.External)
 					{
-						_ = _dispatcher.RunTaskAsync(DispatcherQueuePriority.Normal, async () => await NavigateUsingExternalBrowser(args.Uri));
+						_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () => await NavigateUsingExternalBrowser(
+#if WINDOWS
+							_webView.BaseUri));
+#else
+							args.Uri));
+#endif
 					}
 
 					return;
@@ -457,7 +528,11 @@ namespace AsyncWebView
 					{
 						if (_logger.IsEnabled(LogLevel.Debug))
 						{
+#if WINDOWS
+							_logger.LogDebug($"Executing navigation to '{_webView.BaseUri}' command.");
+#else
 							_logger.LogDebug($"Executing navigation to '{args?.Uri?.AbsoluteUri}' command.");
+#endif
 						}
 
 						NavigationCommand.Execute(args.Uri);
@@ -471,7 +546,11 @@ namespace AsyncWebView
 				if (!(Source as Uri)?.Equals(args.Uri) ?? true)
 				{
 					_isNavigating = true;
+#if WINDOWS
+					SourceUri = _webView.BaseUri;
+#else
 					SourceUri = args.Uri;
+#endif
 					_isNavigating = false;
 				}
 
@@ -514,11 +593,16 @@ namespace AsyncWebView
 			}
 		}
 
-		private bool ProcessNavigationCompleted(WebViewNavigationCompletedEventArgs args)
+		private bool ProcessNavigationCompleted(NavigationCompletedEventArgs args)
 		{
 			// iOS can perform navigations to about:blank right before an actual navigation. We must ignore them.
 			var hasNonBlankSource = !((Source as Uri)?.Equals(_blankPageUri) ?? true);
-			if (hasNonBlankSource && (args.Uri?.AbsoluteUri?.Equals(_blankPageUri.AbsoluteUri, StringComparison.OrdinalIgnoreCase) ?? false))
+			if (hasNonBlankSource &&
+#if WINDOWS
+				(_webView.BaseUri?.AbsoluteUri?.Equals(_blankPageUri.AbsoluteUri, StringComparison.OrdinalIgnoreCase) ?? false))
+#else
+				(args.Uri?.AbsoluteUri?.Equals(_blankPageUri.AbsoluteUri, StringComparison.OrdinalIgnoreCase) ?? false))
+#endif
 			{
 				return false;
 			}
@@ -607,7 +691,7 @@ namespace AsyncWebView
 #if __ANDROID__ || __IOS__
 			var result = await _webView.InvokeScriptAsync(script, arguments);
 #else
-			var result = await _webView.InvokeScriptAsync(script, arguments).AsTask();
+			var result = await _webView.InvokeScriptAsync(ct, script, arguments);
 #endif
 			if (_logger.IsEnabled(LogLevel.Information))
 			{
@@ -618,3 +702,4 @@ namespace AsyncWebView
 		}
 	}
 }
+#endif

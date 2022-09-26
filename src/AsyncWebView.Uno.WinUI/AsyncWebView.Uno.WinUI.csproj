@@ -8,8 +8,8 @@
 	<Authors>nventive</Authors>
 	<Company>nventive</Company>
 	<AssemblyName>AsyncWebView.Uno.WinUI</AssemblyName>
-	<PackageId>Nventive.AsyncWebView.Uno</PackageId>
-	<Description>AsyncWebView.Uno</Description>
+	<PackageId>Nventive.AsyncWebView.Uno.WinUI</PackageId>
+	<Description>AsyncWebView.Uno.WinUI</Description>
 	<GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>asyncwebview;mvvm;maui;winui;ios;android</PackageTags>
@@ -19,7 +19,6 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <DefineConstants>$(DefineConstants);WINUI</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <DefineConstants>$(DefineConstants);__WASM__</DefineConstants>

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Web.WebView2.Core;
 using Windows.Web.Http.Filters;
 
 namespace AsyncWebView
@@ -20,9 +21,7 @@ namespace AsyncWebView
 				_logger.LogDebug("Clearing cache and cookies.");
 			}
 
-			await WebView2
-				.ClearTemporaryWebDataAsync()
-				.AsTask(ct);
+			await _webView.CoreWebView2.CallDevToolsProtocolMethodAsync("Network.clearBrowserCache", "{}");
 
 			ClearCookies();
 
@@ -57,14 +56,15 @@ namespace AsyncWebView
 			}
 		}
 
-		private bool ProcessScriptNotification(NotifyEventArgs args)
+		private bool ProcessScriptNotification(CoreWebView2ScriptDialogOpeningEventArgs args)
 		{
 			if (ScriptNotificationCommand != null)
 			{
 				var parameter = new[]
 				{
-					args.CallingUri?.AbsoluteUri,
-					args.Value
+					args.Uri,
+					args.Message,
+					args.ResultText
 				};
 
 				if (ScriptNotificationCommand.CanExecute(parameter))
