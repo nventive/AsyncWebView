@@ -1,4 +1,4 @@
-﻿#if WINDOWS || __ANDROID__ || __IOS__
+﻿#if WINDOWS || __ANDROID__ || __IOS__ || __WASM__
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,7 +64,7 @@ namespace AsyncWebView
 			}
 			else
 			{
-#if WINDOWS
+#if WINDOWS || __WASM__
 				_webView.Reload();
 #else
 				_webView.Refresh();

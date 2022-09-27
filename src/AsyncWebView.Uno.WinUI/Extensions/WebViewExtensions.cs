@@ -1,11 +1,11 @@
-﻿#if WINDOWS || __ANDROID__ || __IOS__
+﻿#if WINDOWS || __ANDROID__ || __IOS__ || __WASM__
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-#if __ANDROID__ || __IOS__ || __WASM__
+#if __ANDROID__ || __IOS__
 using _WebView = Microsoft.UI.Xaml.Controls.WebView;
 #else
 using _WebView = Microsoft.UI.Xaml.Controls.WebView2;
@@ -49,7 +49,6 @@ namespace AsyncWebView
 			(d as _WebView).NavigateToString(e.NewValue.ToString());
 		}
 
-#if WINDOWS
 		/// <summary>
 		/// Invokes scripts
 		/// </summary>
@@ -69,4 +68,3 @@ namespace AsyncWebView
 #endif
 	}
 }
-#endif
