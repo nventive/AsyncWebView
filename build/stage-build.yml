@@ -17,7 +17,7 @@
     custom: 'workload'
     arguments: 'install android ios macos maccatalyst'
 
- task: MSBuild@1
+- task: MSBuild@1
   displayName: 'Restore solution packages'
   inputs:
     solution: $(Build.SourcesDirectory)/$(SolutionFileName)
