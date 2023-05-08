@@ -1,8 +1,11 @@
-﻿#if WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__
+﻿#if WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__ || WINDOWS10_0_18362_0_OR_GREATER
 using System;
+#if WINUI
+using Microsoft.UI.Xaml;
+#else
 using Windows.UI.Xaml;
+#endif
 using System.Windows.Input;
-
 #if WINDOWS_UWP
 using Windows.Web.Http;
 #else

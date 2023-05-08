@@ -1,4 +1,4 @@
-﻿#if WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__
+﻿#if WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__ || WINDOWS10_0_18362_0_OR_GREATER
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,7 +64,11 @@ namespace AsyncWebView
 			}
 			else
 			{
+#if WINUI
+				_webView.Reload();
+#else
 				_webView.Refresh();
+#endif
 			}
 
 			if (_logger.IsEnabled(LogLevel.Information))

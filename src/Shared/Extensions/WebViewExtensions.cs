@@ -1,11 +1,17 @@
-﻿#if WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__
+﻿#if WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__ || WINDOWS10_0_18362_0_OR_GREATER
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
+#if WINUI
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using _WebView = Microsoft.UI.Xaml.Controls.WebView2;
+#else
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using _WebView = Windows.UI.Xaml.Controls.WebView;
+#endif
 
 namespace AsyncWebView
 {
