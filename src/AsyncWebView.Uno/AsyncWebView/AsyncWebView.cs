@@ -57,7 +57,7 @@ namespace AsyncWebView
 		public AsyncWebView()
 		{
 			DefaultStyleKey = typeof(AsyncWebView);
-			
+
 			_logger = Logger ?? NullLogger<AsyncWebView>.Instance;
 			_dispatcher = Dispatcher;
 
