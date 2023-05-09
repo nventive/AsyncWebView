@@ -19,7 +19,7 @@ variables:
   value: AsyncWebView.sln
 # Pool names
 - name: windowsPoolName
-  value: 'windows 2022'
+  value: 'windows-2022'
 
 stages:
 - stage: Build
@@ -34,7 +34,7 @@ stages:
           GeneratePackageOnBuild: true
 
     pool:
-      name: $(windowsPoolName)
+      vmImage: $(windowsPoolName)
 
     variables:
     - name: PackageOutputPath # Path where nuget packages will be copied to.
@@ -55,7 +55,7 @@ stages:
   - job: Publish_NuGet_Internal
 
     pool:
-      name: $(windowsPoolName)
+      vmImage: $(windowsPoolName)
 
     workspace:
       clean: all # Cleanup the workspaca before starting
