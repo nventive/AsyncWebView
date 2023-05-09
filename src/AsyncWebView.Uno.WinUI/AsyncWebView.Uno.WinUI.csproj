@@ -10,7 +10,6 @@
 		<AssemblyName>AsyncWebView.Uno.WinUI</AssemblyName>
 		<PackageId>AsyncWebView.Uno.WinUI</PackageId>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>async;webview;mvvm;maui;winui;ios;android</PackageTags>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/nventive/AsyncWebView</PackageProjectUrl>
