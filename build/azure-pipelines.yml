@@ -2,12 +2,7 @@ trigger:
   branches:
     include:
     - master
-
-resources:
-   containers:
-     - container: windows
-       image: nventive/vs_build-tools:17.2.5
-
+    
 variables:
 - name: NUGET_VERSION
   value: 6.2.0
@@ -42,8 +37,6 @@ stages:
 
     workspace:
       clean: all # Cleanup the workspaca before starting
-
-    container: windows
 
     steps:
     - template: stage-build.yml
