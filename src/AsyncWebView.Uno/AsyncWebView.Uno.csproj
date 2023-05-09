@@ -12,7 +12,6 @@
 		<PackageId>Nventive.AsyncWebView.Uno</PackageId>
 		<Description>AsyncWebView.Uno</Description>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>async;webview;mvvm;xamarin;uwp;ios;android</PackageTags>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/nventive/AsyncWebView</PackageProjectUrl>
@@ -25,6 +24,7 @@
   <ItemGroup>
     <PackageReference Include="Uno.UI" Version="4.0.7" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.7" />
+		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
   </ItemGroup>
