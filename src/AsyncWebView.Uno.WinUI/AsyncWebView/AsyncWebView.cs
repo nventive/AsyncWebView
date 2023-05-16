@@ -287,7 +287,8 @@ public partial class AsyncWebView : Control
 		{
 			try
 			{
-				_webView?.NavigateToString(message.RequestUri.OriginalString);
+				await _webView.EnsureCoreWebView2Async();
+				_webView?.CoreWebView2.NavigateToString(message.RequestUri.OriginalString);
 			}
 			catch (Exception e)
 			{
@@ -305,7 +306,8 @@ public partial class AsyncWebView : Control
 		{
 			try
 			{
-				_webView?.NavigateToString(content);
+				await _webView.EnsureCoreWebView2Async();
+				_webView?.CoreWebView2.NavigateToString(content);
 			}
 			catch (Exception e)
 			{
@@ -323,7 +325,8 @@ public partial class AsyncWebView : Control
 		{
 			try
 			{
-				_webView?.NavigateToString(uri.OriginalString);
+				await _webView.EnsureCoreWebView2Async();
+				_webView?.CoreWebView2.Navigate(uri.OriginalString);
 
 			}
 			catch (Exception e)
@@ -357,17 +360,22 @@ public partial class AsyncWebView : Control
 	{
 		_webView.NavigationStarting += OnNavigationgStartingEvent;
 		_webView.NavigationCompleted += OnNavigationCompletedEvent;
-		_webView.CoreWebView2.ProcessFailed += OnNavigationFailedEvent;
-
+		_webView.CoreProcessFailed += OnNavigationFailedEvent;
 #if WINDOWS
-		_webView.CoreWebView2.ScriptDialogOpening += OnScriptNotifyEvent;
+		_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () => {
+
+
+			await _webView.EnsureCoreWebView2Async();
+			_webView.CoreWebView2.ScriptDialogOpening += OnScriptNotifyEvent;
+		});
 #endif
+
 
 		return Disposable.Create(() =>
 		{
 			_webView.NavigationStarting -= OnNavigationgStartingEvent;
 			_webView.NavigationCompleted -= OnNavigationCompletedEvent;
-			_webView.CoreWebView2.ProcessFailed -= OnNavigationFailedEvent;
+			_webView.CoreProcessFailed -= OnNavigationFailedEvent;
 
 #if WINDOWS
 			_webView.CoreWebView2.ScriptDialogOpening -= OnScriptNotifyEvent;
@@ -388,7 +396,7 @@ public partial class AsyncWebView : Control
 		ProcessNavigationStarting(args);
 	}
 
-	private void OnNavigationFailedEvent(object sender, NavigationFailedEventArgs e)
+	private void OnNavigationFailedEvent(_WebView sender, NavigationFailedEventArgs e)
 	{
 		(GoBackCommand as WebViewCommand)?.RaiseCanExecuteChanged();
 		(GoForwardCommand as WebViewCommand)?.RaiseCanExecuteChanged();
@@ -417,7 +425,8 @@ public partial class AsyncWebView : Control
 			return;
 		}
 
-		var absoluteUri = args.Uri;
+		Uri uri = new Uri(args.Uri);
+		var absoluteUri = (Source as Uri).AbsoluteUri;
 
 		// We always ignore starting a navigation to about:blank.
 		if (absoluteUri.Equals(_blankPageUri.AbsoluteUri, StringComparison.OrdinalIgnoreCase))
@@ -429,7 +438,7 @@ public partial class AsyncWebView : Control
 		if (absoluteUri.IsUrlAction())
 		{
 
-			var isSchemeSupported = HandleLinkWithScheme(_webView.Source);
+			var isSchemeSupported = HandleLinkWithScheme(uri);
 
 			// If action type was handled, cancel navigation
 			if (isSchemeSupported)
@@ -447,11 +456,11 @@ public partial class AsyncWebView : Control
 
 				if (NavigationMode == NavigationMode.Application)
 				{
-					_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () => await NavigateUsingApplication(_webView.Source));
+					_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () => await NavigateUsingApplication(uri));
 				}
 				else if (NavigationMode == NavigationMode.External)
 				{
-					_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () => await NavigateUsingExternalBrowser(_webView.Source));
+					_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () => await NavigateUsingExternalBrowser(uri));
 				}
 
 				return;
@@ -464,7 +473,7 @@ public partial class AsyncWebView : Control
 				{
 					if (_logger.IsEnabled(LogLevel.Debug))
 					{
-						_logger.LogDebug($"Executing navigation to '{_webView.Source}' command.");
+						_logger.LogDebug($"Executing navigation to '{args.Uri}' command.");
 					}
 
 					NavigationCommand.Execute(args.Uri);
@@ -523,10 +532,11 @@ public partial class AsyncWebView : Control
 
 	private bool ProcessNavigationCompleted(NavigationCompletedEventArgs args)
 	{
+		var sourceUri = (Source as Uri);
 		// iOS can perform navigations to about:blank right before an actual navigation. We must ignore them.
-		var hasNonBlankSource = !((Source as Uri)?.Equals(_blankPageUri) ?? true);
+		var hasNonBlankSource = !(sourceUri?.Equals(_blankPageUri) ?? true);
 		if (hasNonBlankSource &&
-			(_webView.Source?.AbsoluteUri?.Equals(_blankPageUri.AbsoluteUri, StringComparison.OrdinalIgnoreCase) ?? false))
+			(sourceUri?.AbsoluteUri?.Equals(_blankPageUri.AbsoluteUri, StringComparison.OrdinalIgnoreCase) ?? false))
 		{
 			return false;
 		}
