@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
   <PropertyGroup>
 		<!-- Change the TargetFrameworks depending on which platform you are building on. This avoids errors as it is impossible to build UAP on OSX (MacOS) -->
 		<TargetFrameworks Condition="'$([MSBuild]::IsOsPlatform(OSX))'">netstandard2.0;xamarinios10;</TargetFrameworks>
@@ -12,6 +12,9 @@
 		<PackageId>Nventive.AsyncWebView.Uno</PackageId>
 		<Description>AsyncWebView.Uno</Description>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageTags>async;webview;mvvm;xamarin;uwp;ios;android</PackageTags>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/nventive/AsyncWebView</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
@@ -20,8 +23,11 @@
 
   <ItemGroup>
     <PackageReference Include="Uno.UI" Version="4.0.7" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.7" />
+		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
   </ItemGroup>
+
+	<Import Project="..\Shared\Shared.projitems" Label="Shared" />
 </Project>

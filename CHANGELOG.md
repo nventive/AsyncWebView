@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.5.0] - 2023-05-24
+
+### Added
+* Support for NET 6
+* Support for WebView2 in the WinUI package
+### Changed
+* The WinUI package temporarily uses the Uno version to 4.9.0-dev.1113 instead of 4.0.7
+
+## [0.4.0]
+
 ### Added
 * Build with VS2022
 * Add support for uap10.0.19041
