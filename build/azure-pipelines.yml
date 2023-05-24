@@ -2,24 +2,19 @@ trigger:
   branches:
     include:
     - master
-
-resources:
-   containers:
-     - container: windows
-       image: nventive/vs_build-tools:17.1.1
-
+    
 variables:
 - name: NUGET_VERSION
-  value: 6.1.0
+  value: 6.2.0
 - name: VSTEST_PLATFORM_VERSION
-  value: 17.1.0
+  value: 17.2.5
 - name: ArtifactName
   value: Packages
 - name: SolutionFileName # Example: MyApplication.sln
   value: AsyncWebView.sln
 # Pool names
 - name: windowsPoolName
-  value: 'windows 2022'
+  value: 'windows-2022'
 
 stages:
 - stage: Build
@@ -34,7 +29,7 @@ stages:
           GeneratePackageOnBuild: true
 
     pool:
-      name: $(windowsPoolName)
+      vmImage: $(windowsPoolName)
 
     variables:
     - name: PackageOutputPath # Path where nuget packages will be copied to.
@@ -42,8 +37,6 @@ stages:
 
     workspace:
       clean: all # Cleanup the workspaca before starting
-
-    container: windows
 
     steps:
     - template: stage-build.yml
@@ -55,7 +48,7 @@ stages:
   - job: Publish_NuGet_Internal
 
     pool:
-      name: $(windowsPoolName)
+      vmImage: $(windowsPoolName)
 
     workspace:
       clean: all # Cleanup the workspaca before starting
