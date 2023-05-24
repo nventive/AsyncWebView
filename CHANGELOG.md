@@ -10,9 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 * Support for NET 6
-* Support for WebView2 in the WinUI package
-### Changed
-* The WinUI package temporarily uses the Uno version to 4.9.0-dev.1113 instead of 4.0.7
+* Support for WebView2 in AsyncWebView.Uno.WinUI with Uno.WinUI version 4.9.0-dev.1113
 
 ## [0.4.0]
 
@@ -21,14 +19,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * Add support for uap10.0.19041
 * Add support for Android 12
 * Support for Android 11 (March, 2021)
+
 ### Changed
 * [#23] Change target Uno.UI version to 4.0.7.
-### Deprecated
 
 ### Removed
 * Dropped support for uap10.0.18362
 * Dropped support for MonoAndroid10 target
-
-### Fixed
-
-### Security
