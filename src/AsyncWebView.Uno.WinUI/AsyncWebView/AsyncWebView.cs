@@ -164,7 +164,7 @@ public partial class AsyncWebView : Control
 
 		if (_logger.IsEnabled(LogLevel.Information))
 		{
-			_logger.LogInformation($"The navigation to uri '{SourceUri.AbsoluteUri}' has succeeded.");
+			_logger.LogInformation($"The navigation to uri has succeeded.");
 		}
 	}
 
@@ -176,7 +176,7 @@ public partial class AsyncWebView : Control
 
 		if (_logger.IsEnabled(LogLevel.Error))
 		{
-			_logger.LogError($"The navigation to uri '{SourceUri.AbsoluteUri}' failed due to '{args?.WebErrorStatus}'.");
+			_logger.LogError($"The navigation to uri failed due to '{args?.WebErrorStatus}'.");
 		}
 	}
 
@@ -184,14 +184,14 @@ public partial class AsyncWebView : Control
 	{
 		if (_logger.IsEnabled(LogLevel.Debug))
 		{
-			_logger.LogDebug($"Handling the completed navigation to uri '{SourceUri.AbsoluteUri}'.");
+			_logger.LogDebug($"Handling the completed navigation to uri.");
 		}
 
 		if (CompletionCommand != null)
 		{
 			// We cannot use WebViewNavigationCompletedEventArgs directly, as it must be called from the UI Thread on Windows
 			// The WebErrorStatus field is not provided, as it uses a different namespace in Uno and Windows.
-			var commandArgs = new CompletionCommandArgs(this, args.IsSuccess, SourceUri);
+			var commandArgs = new CompletionCommandArgs(this, args.IsSuccess, SourceUri ?? null);
 
 			if (CompletionCommand.CanExecute(commandArgs))
 			{
@@ -200,7 +200,7 @@ public partial class AsyncWebView : Control
 
 			if (_logger.IsEnabled(LogLevel.Information))
 			{
-				_logger.LogInformation($"Handled the completed navigation to uri '{SourceUri.AbsoluteUri}'.");
+				_logger.LogInformation($"Handled the completed navigation to uri.");
 			}
 		}
 	}
@@ -426,7 +426,7 @@ public partial class AsyncWebView : Control
 		}
 
 		Uri uri = new Uri(args.Uri);
-		var absoluteUri = (Source as Uri).AbsoluteUri;
+		string absoluteUri = uri.AbsoluteUri;
 
 		// We always ignore starting a navigation to about:blank.
 		if (absoluteUri.Equals(_blankPageUri.AbsoluteUri, StringComparison.OrdinalIgnoreCase))
