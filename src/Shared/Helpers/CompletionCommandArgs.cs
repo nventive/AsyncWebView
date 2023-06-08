@@ -18,7 +18,7 @@ namespace AsyncWebView
 		/// <param name="asyncWebView">Async Webview</param>
 		/// <param name="isSuccess">If the navigation completed with success</param>
 		/// <param name="uri">The destination Uri of the navigation, if any</param>
-		public CompletionCommandArgs(AsyncWebView asyncWebView, bool isSuccess, Uri uri)
+		public CompletionCommandArgs(AsyncWebView asyncWebView, bool isSuccess, Uri? uri) 
 		{
 			_asyncWebView = asyncWebView;
 
@@ -34,7 +34,7 @@ namespace AsyncWebView
 		/// <summary>
 		/// Gets the destination Uri of the navigation, if any.
 		/// </summary>
-		public Uri Uri { get; }
+		public Uri? Uri { get; }
 
 		/// <summary>
 		/// Invokes the secified javascript in the context of the currently loaded web page.
