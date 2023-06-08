@@ -150,11 +150,9 @@ public partial class AsyncWebView : Control
 
 	protected virtual bool OnNavigationStarting(NavigationStartingEventArgs args)
 	{
-		SourceUri = new Uri(args?.Uri);
-
 		if (_logger.IsEnabled(LogLevel.Trace))
 		{
-			_logger.Trace($"Navigation to uri '{args?.Uri}' is starting.");
+			_logger.Trace($"Navigation '{args?.NavigationId}', to uri '{args?.Uri}', is starting.");
 		}
 
 		return true;
@@ -166,7 +164,7 @@ public partial class AsyncWebView : Control
 
 		if (_logger.IsEnabled(LogLevel.Information))
 		{
-			_logger.LogInformation($"The navigation to uri '{SourceUri.AbsoluteUri}' has succeeded.");
+			_logger.LogInformation($"Navigation '{args?.NavigationId}' has succeeded.");
 		}
 	}
 
@@ -178,7 +176,7 @@ public partial class AsyncWebView : Control
 
 		if (_logger.IsEnabled(LogLevel.Error))
 		{
-			_logger.LogError($"The navigation to uri '{SourceUri.AbsoluteUri}' failed due to '{args?.WebErrorStatus}'.");
+			_logger.LogError($"Navigation '{args?.NavigationId}' on the AsyncWebView failed due to '{args?.WebErrorStatus}'.");
 		}
 	}
 
@@ -186,7 +184,7 @@ public partial class AsyncWebView : Control
 	{
 		if (_logger.IsEnabled(LogLevel.Debug))
 		{
-			_logger.LogDebug($"Handling the completed navigation to uri '{SourceUri.AbsoluteUri}'.");
+			_logger.LogDebug($"Handling the completed navigation '{args?.NavigationId}'.");
 		}
 
 		if (CompletionCommand != null)
@@ -202,7 +200,7 @@ public partial class AsyncWebView : Control
 
 			if (_logger.IsEnabled(LogLevel.Information))
 			{
-				_logger.LogInformation($"Handled the completed navigation to uri '{SourceUri.AbsoluteUri}'.");
+				_logger.LogInformation($"Handled the completed navigation '{args?.NavigationId}'.");
 			}
 		}
 	}
