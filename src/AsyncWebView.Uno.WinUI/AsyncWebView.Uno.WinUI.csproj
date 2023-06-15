@@ -1,5 +1,5 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
-  <PropertyGroup>
+	<PropertyGroup>
 		<TargetFrameworks>net6.0-windows10.0.18362;netstandard2.0;net6.0-android;net6.0-ios;</TargetFrameworks>
 		<LangVersion>10.0</LangVersion>
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
@@ -20,7 +20,8 @@
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-  </PropertyGroup>
+	</PropertyGroup>
+
 	<PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
 		<DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
 	</PropertyGroup>
@@ -29,29 +30,35 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
 		<PackageReference Include="Uno.Core.Extensions.Logging" Version="4.0.1" />
-  </ItemGroup>
-  <Choose>
-    <When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
-      <ItemGroup>
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
-      </ItemGroup>
-      <ItemGroup>
-        <!--
-				If you encounter this error message:
+	</ItemGroup>
 
-					error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
-					Please update to a newer .NET SDK in order to reference this assembly.
+	<ItemGroup>
+		<!-- Needed for Source Link support -->
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+	</ItemGroup>
 
-				This means that the two packages below must be aligned with the "build" version number of
-				the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
-				must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
-				-->
-        <!-- <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22621.28" />
-				<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
-      </ItemGroup>
-    </When>
-  </Choose>
+	<Choose>
+		<When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+			<ItemGroup>
+				<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
+				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+			</ItemGroup>
+			<ItemGroup>
+				<!--
+						If you encounter this error message:
+
+							error NETSDK1148: A referenced assembly was compiled using a newer version of Microsoft.Windows.SDK.NET.dll.
+							Please update to a newer .NET SDK in order to reference this assembly.
+
+						This means that the two packages below must be aligned with the "build" version number of
+						the "Microsoft.Windows.SDK.BuildTools" package above, and the "revision" version number
+						must be the highest found in https://www.nuget.org/packages/Microsoft.Windows.SDK.NET.Ref.
+						-->
+				<!-- <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22621.28" />
+						<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22621.28" /> -->
+			</ItemGroup>
+		</When>
+	</Choose>
 
 	<Import Project="..\Shared\Shared.projitems" Label="Shared" />
 </Project>
