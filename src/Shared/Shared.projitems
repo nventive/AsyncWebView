@@ -13,7 +13,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)AsyncWebView\AsyncWebView.Android.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AsyncWebView\AsyncWebView.Commands.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AsyncWebView\AsyncWebView.iOS.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AsyncWebView\AsyncWebView.Properties.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AsyncWebView\AsyncWebView.Wasm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\VisualStates.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
