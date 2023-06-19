@@ -1,16 +1,12 @@
 ﻿#if WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__ || WINUI
 using System;
+using System.Net.Http;
 #if WINUI
 using Microsoft.UI.Xaml;
 #else
 using Windows.UI.Xaml;
 #endif
 using System.Windows.Input;
-#if WINDOWS_UWP
-using Windows.Web.Http;
-#else
-using System.Net.Http;
-#endif
 
 namespace AsyncWebView
 {
@@ -146,7 +142,7 @@ namespace AsyncWebView
 		/// Source message property
 		/// </summary>
 		public static readonly DependencyProperty SourceMessageProperty =
-			DependencyProperty.Register("SourceMessage", typeof(Windows.Web.Http.HttpRequestMessage), typeof(AsyncWebView), new PropertyMetadata(null, (s, e) => (s as AsyncWebView)?.OnSourceMessageChanged(e.NewValue as Windows.Web.Http.HttpRequestMessage)));
+			DependencyProperty.Register("SourceMessage", typeof(HttpRequestMessage), typeof(AsyncWebView), new PropertyMetadata(null, (s, e) => (s as AsyncWebView)?.OnSourceMessageChanged(e.NewValue as HttpRequestMessage)));
 
 		/// <summary>
 		/// Gets or sets the source <seealso cref="HttpRequestMessage"/> to use to perform a

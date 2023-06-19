@@ -1,6 +1,7 @@
 ﻿#if WINDOWS || __ANDROID__ || __IOS__ || __WASM__
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,6 @@ using Windows.System;
 using _WebView = Microsoft.UI.Xaml.Controls.WebView2;
 using DispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue;
 using DispatcherQueuePriority = Microsoft.UI.Dispatching.DispatcherQueuePriority;
-using HttpRequestMessage = Windows.Web.Http.HttpRequestMessage;
 using NavigationCompletedEventArgs = Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs;
 using NavigationFailedEventArgs = Microsoft.Web.WebView2.Core.CoreWebView2ProcessFailedEventArgs;
 using NavigationStartingEventArgs = Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs;
@@ -288,7 +288,7 @@ public partial class AsyncWebView : Control
 			try
 			{
 				await _webView.EnsureCoreWebView2Async();
-				_webView?.CoreWebView2.NavigateToString(message.RequestUri.OriginalString);
+				_webView?.CoreWebView2.Navigate(message.RequestUri.OriginalString);
 			}
 			catch (Exception e)
 			{
@@ -532,7 +532,21 @@ public partial class AsyncWebView : Control
 
 	private bool ProcessNavigationCompleted(NavigationCompletedEventArgs args)
 	{
-		var sourceUri = (Source as Uri);
+		var sourceUri = default(Uri);
+
+		if (Source is string source)
+		{
+			sourceUri = new Uri(source);
+		}
+		else if (Source is Uri uri)
+		{
+			sourceUri = uri;
+		}
+		else if (Source is HttpRequestMessage request)
+		{
+			sourceUri = request.RequestUri;
+		}
+
 		// iOS can perform navigations to about:blank right before an actual navigation. We must ignore them.
 		var hasNonBlankSource = !(sourceUri?.Equals(_blankPageUri) ?? true);
 		if (hasNonBlankSource &&
@@ -557,7 +571,6 @@ public partial class AsyncWebView : Control
 			// While on Error state page we can hear the sound coming from the fallingfalling.com
 			// When navigating to microsoft.com we have a glimpse at fallingfalling.com
 			NavigateToBlank();
-
 			OnNavigationFailed(args);
 		}
 
