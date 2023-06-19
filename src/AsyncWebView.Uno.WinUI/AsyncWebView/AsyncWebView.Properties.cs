@@ -1,4 +1,4 @@
-﻿#if WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__ || WINUI
+﻿#if __ANDROID__ || __IOS__ || __WASM__ || WINUI
 using System;
 #if WINUI
 using Microsoft.UI.Xaml;
@@ -6,11 +6,6 @@ using Microsoft.UI.Xaml;
 using Windows.UI.Xaml;
 #endif
 using System.Windows.Input;
-#if WINDOWS_UWP
-using Windows.Web.Http;
-#else
-using System.Net.Http;
-#endif
 
 namespace AsyncWebView
 {
@@ -140,25 +135,23 @@ namespace AsyncWebView
 
 		#endregion
 
-		#region SourceMessage
-
+#region SourceMessage
 		/// <summary>
 		/// Source message property
 		/// </summary>
 		public static readonly DependencyProperty SourceMessageProperty =
-			DependencyProperty.Register("SourceMessage", typeof(Windows.Web.Http.HttpRequestMessage), typeof(AsyncWebView), new PropertyMetadata(null, (s, e) => (s as AsyncWebView)?.OnSourceMessageChanged(e.NewValue as Windows.Web.Http.HttpRequestMessage)));
+			DependencyProperty.Register("SourceMessage", typeof(System.Net.Http.HttpRequestMessage), typeof(AsyncWebView), new PropertyMetadata(null, (s, e) => (s as AsyncWebView)?.OnSourceMessageChanged(e.NewValue as System.Net.Http.HttpRequestMessage)));
 
 		/// <summary>
 		/// Gets or sets the source <seealso cref="HttpRequestMessage"/> to use to perform a
 		/// navigation to an HTTP resource.
 		/// </summary>
-		public HttpRequestMessage SourceMessage
+		public System.Net.Http.HttpRequestMessage SourceMessage
 		{
-			get { return (HttpRequestMessage)GetValue(SourceMessageProperty); }
+			get { return (System.Net.Http.HttpRequestMessage)GetValue(SourceMessageProperty); }
 			set { SetValue(SourceMessageProperty, value); }
 		}
-
-		#endregion
+#endregion
 
 		#region SourceUri
 

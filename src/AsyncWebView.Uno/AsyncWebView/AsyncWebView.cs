@@ -1,17 +1,21 @@
 ﻿#if WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Disposables;
 using Uno.Logging;
 using Windows.System;
-using Windows.Web.Http;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Microsoft.Extensions.Logging.Abstractions;
-using System.Linq;
+#if WINDOWS_UWP || __WASM__
+using Windows.Web.Http;
+#else
+using System.Net.Http;
+#endif
 
 namespace AsyncWebView
 {
