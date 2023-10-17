@@ -31,8 +31,3 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the process for
 contributing to this project.
 
 Be mindful of our [Code of Conduct](CODE_OF_CONDUCT.md).
-
-## Contributors
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
