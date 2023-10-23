@@ -534,7 +534,7 @@ public partial class AsyncWebView : Control
 	{
 		var sourceUri = default(Uri);
 
-		if (Source is string source)
+		if (Source is string source && Uri.IsWellFormedUriString(source, UriKind.RelativeOrAbsolute))
 		{
 			sourceUri = new Uri(source);
 		}

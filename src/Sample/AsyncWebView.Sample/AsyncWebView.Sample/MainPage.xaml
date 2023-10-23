@@ -1,0 +1,29 @@
+<Page x:Class="AsyncWebView.Sample.MainPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:AsyncWebView.Sample"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:uw="using:AsyncWebView"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Page.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="AsyncWebView.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Page.Resources>
+	<StackPanel HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch">
+		<TextBlock AutomationProperties.AutomationId="HelloTextBlock"
+					Text="Hello Uno Platform" 
+					HorizontalAlignment="Center" />
+		<uw:AsyncWebView x:Name="Webview"
+						 HorizontalAlignment="Stretch"
+						 VerticalAlignment="Stretch"
+						 OpenLinksUsingExternalBrowser="True"
+						 IsClearingOnUnload="True" />
+	</StackPanel>
+</Page>

@@ -1,0 +1,13 @@
+{
+  "solution": {
+    "path": "AsyncWebView.Sample.sln",
+    "projects": [
+      "AsyncWebView.Sample.Mobile\\AsyncWebView.Sample.Mobile.csproj",
+      "AsyncWebView.Sample.Skia.Gtk\\AsyncWebView.Sample.Skia.Gtk.csproj",
+      "AsyncWebView.Sample.Wasm\\AsyncWebView.Sample.Wasm.csproj",
+      "AsyncWebView.Sample.Server\\AsyncWebView.Sample.Server.csproj",
+      "AsyncWebView.Sample.Base\\AsyncWebView.Sample.Base.csproj",
+      "AsyncWebView.Sample\\AsyncWebView.Sample.csproj"
+    ]
+  }
+}
