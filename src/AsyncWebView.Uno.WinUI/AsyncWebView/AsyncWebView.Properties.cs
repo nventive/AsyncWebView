@@ -298,6 +298,24 @@ namespace AsyncWebView
 			DependencyProperty.Register("ScriptNotificationCommand", typeof(ICommand), typeof(AsyncWebView), new PropertyMetadata(null));
 
 		#endregion
+
+		#region CanLoadFilesFromExternalStorage
+		/// <summary>
+		/// Can load files from external storage property
+		/// </summary>
+		public static readonly DependencyProperty CanLoadFilesFromExternalStorageProperty =
+			DependencyProperty.Register("CanLoadFilesFromExternalStorage", typeof(bool), typeof(AsyncWebView), new PropertyMetadata(false));
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the webview is allowed to load files from the 
+		/// local (external) storage. This property is ignored in platforms other than Android
+		/// </summary>
+		public bool CanLoadFilesFromExternalStorage
+		{
+			get { return (bool)GetValue(CanLoadFilesFromExternalStorageProperty); }
+			set { SetValue(CanLoadFilesFromExternalStorageProperty, value); }
+		}
+		#endregion
 	}
 }
 #endif

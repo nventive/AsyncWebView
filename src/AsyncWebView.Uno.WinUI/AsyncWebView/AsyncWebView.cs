@@ -84,6 +84,10 @@ public partial class AsyncWebView : Control
 		_webView = GetTemplateChild(WebViewPartName) as _WebView ?? throw new ArgumentNullException(WebViewPartName);
 
 		_state.SetState(ControlState.Templated);
+
+#if !NETSTANDARD2_0
+		InitializeWebView();
+#endif
 	}
 
 	private void OnLoaded(object sender, RoutedEventArgs e)

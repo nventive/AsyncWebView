@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 #if WINUI
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
+using Uno.UI;
 #else
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -55,6 +56,18 @@ namespace AsyncWebView
 			{
 				yield return VisualTreeHelper.GetChild(obj, i);
 			}
+		}
+
+		// Add any platform-specific initialization for your webview here
+		private void InitializeWebView() 
+		{
+#if WINUI
+			var nativeWebView = _webView?.FindFirstChild<WebView>();
+			if (nativeWebView?.Settings != null)
+			{
+				nativeWebView.Settings.AllowFileAccessFromFileURLs = CanLoadFilesFromExternalStorage;
+			}
+#endif
 		}
 	}
 }

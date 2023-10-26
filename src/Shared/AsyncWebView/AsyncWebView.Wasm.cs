@@ -18,6 +18,9 @@ namespace AsyncWebView
 		{
 			return Task.CompletedTask;
 		}
+
+		// Add any platform-specific initialization for your webview here
+		private void InitializeWebView() { }
 	}
 }
 #endif

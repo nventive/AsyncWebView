@@ -77,5 +77,8 @@ public partial class AsyncWebView
 
 		return false;
 	}
+
+	// Add any platform-specific initialization for your webview here
+	private void InitializeWebView() { }
 }
 #endif

@@ -38,6 +38,9 @@ namespace AsyncWebView
 					date: NSDate.FromTimeIntervalSince1970(0)
 				);
 		}
+
+		// Add any platform-specific initialization for your webview here
+		private void InitializeWebView() { }
 	}
 }
 #endif
