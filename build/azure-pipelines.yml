@@ -13,7 +13,7 @@ variables:
 - name: SolutionFileName # Example: MyApplication.sln
   value: AsyncWebView.sln
 # Pool names
-- name: windowsPoolName
+- name: windowsHostedAgentImage
   value: 'windows-2022'
 
 stages:
@@ -29,7 +29,7 @@ stages:
           GeneratePackageOnBuild: true
 
     pool:
-      vmImage: $(windowsPoolName)
+      vmImage: $(windowsHostedAgentImage)
 
     variables:
     - name: PackageOutputPath # Path where nuget packages will be copied to.
@@ -48,7 +48,7 @@ stages:
   - job: Publish_NuGet_Internal
 
     pool:
-      vmImage: $(windowsPoolName)
+      vmImage: $(windowsHostedAgentImage)
 
     workspace:
       clean: all # Cleanup the workspaca before starting
