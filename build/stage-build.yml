@@ -11,6 +11,16 @@
     configFilePath: $(Build.SourcesDirectory)/build/gitversion.yml
   displayName: 'Calculate version'
 
+- script: dotnet workload install ios android"
+  displayName: 'Install .NET 6 workload'
+
+- task: JavaToolInstaller@0
+  displayName: "Install Java SDK 11"
+  inputs:
+    versionSpec: '11'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+
 - task: NuGetAuthenticate@1
   inputs:
     forceReinstallCredentialProvider: true
