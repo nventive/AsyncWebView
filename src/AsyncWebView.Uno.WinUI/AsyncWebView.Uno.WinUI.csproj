@@ -25,6 +25,11 @@
 	<PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
 		<DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
 	</PropertyGroup>
+
+	<PropertyGroup>
+		<!-- Needed to suppress warning about out of support workload, remove when updating to dotnet 7 -->
+		<CheckEolWorkloads>false</CheckEolWorkloads>
+	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Uno.WinUI" Version="4.9.17" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
