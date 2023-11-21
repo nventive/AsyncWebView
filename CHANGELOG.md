@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.6.0] - 2023-01-22
+### Added
+* Support for NET 7
+
+### Changed
+* Updated Uno.WinUI to 5.0.19
+
+### Removed
+* Dropped support for Xamarin and UWP
+* Dropped support for NetStandard2.0
+- Removed Xamarin samples 
+
 ## [0.5.0] - 2023-05-24
 
 ### Added

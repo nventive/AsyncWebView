@@ -1,7 +1,4 @@
-﻿#if WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__ || WINUI
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿#if __ANDROID__ || __IOS__ || __WASM__ || WINUI
 using Microsoft.Extensions.Logging;
 
 namespace AsyncWebView
@@ -66,8 +63,6 @@ namespace AsyncWebView
 			{
 #if WINUI
 				_webView.Reload();
-#else
-				_webView.Refresh();
 #endif
 			}
 
