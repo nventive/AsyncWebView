@@ -1,4 +1,4 @@
-﻿#if WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__ || WINUI
+﻿#if __ANDROID__ || __IOS__ || __WASM__ || WINUI
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,10 +7,6 @@ using Windows.Foundation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using _WebView = Microsoft.UI.Xaml.Controls.WebView2;
-#else
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using _WebView = Windows.UI.Xaml.Controls.WebView;
 #endif
 
 namespace AsyncWebView
@@ -50,21 +46,6 @@ namespace AsyncWebView
 		{
 			(d as _WebView).NavigateToString(e.NewValue.ToString());
 		}
-
-#if WINDOWS_UWP
-		/// <summary>
-		/// Invokes scripts
-		/// </summary>
-		/// <param name="webView">Web view</param>
-		/// <param name="ct">Cancellation token</param>
-		/// <param name="script">Script</param>
-		/// <param name="arguments">Script agruments</param>
-		/// <returns>void</returns>
-		public static async Task<string> InvokeScriptAsync(this _WebView webView, CancellationToken ct, string script, string[] arguments)
-		{
-			return await webView.InvokeScriptAsync(script, arguments).AsTask(ct);
-		}
-#endif
 	}
 }
 #endif

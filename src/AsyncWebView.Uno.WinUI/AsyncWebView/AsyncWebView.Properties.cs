@@ -2,8 +2,6 @@
 using System;
 #if WINUI
 using Microsoft.UI.Xaml;
-#else
-using Windows.UI.Xaml;
 #endif
 using System.Windows.Input;
 
