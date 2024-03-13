@@ -61,5 +61,6 @@
 		</When>
 	</Choose>
 
+	<Import Project="winappsdk-workaround.targets" />
 	<Import Project="..\Shared\Shared.projitems" Label="Shared" />
 </Project>
