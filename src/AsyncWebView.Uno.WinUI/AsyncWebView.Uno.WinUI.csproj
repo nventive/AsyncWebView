@@ -1,7 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-windows10.0.18362;netstandard2.0;net6.0-android;net6.0-ios;</TargetFrameworks>
-		<LangVersion>10.0</LangVersion>
+		<TargetFrameworks>net7.0;net7.0-windows10.0.19041;net7.0-android;net7.0-ios;</TargetFrameworks>
+		<LangVersion>11.0</LangVersion>
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 		<RootNamespace>AsyncWebView</RootNamespace>
@@ -22,11 +22,12 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+	<PropertyGroup Condition="'$(TargetFramework)'=='net7.0'">
 		<DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
 	</PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Uno.WinUI" Version="4.9.17" />
+
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI" Version="5.0.19" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
 		<PackageReference Include="Uno.Core.Extensions.Logging" Version="4.0.1" />
@@ -60,5 +61,6 @@
 		</When>
 	</Choose>
 
+	<Import Project="winappsdk-workaround.targets" />
 	<Import Project="..\Shared\Shared.projitems" Label="Shared" />
 </Project>
