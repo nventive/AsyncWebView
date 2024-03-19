@@ -48,7 +48,7 @@ stages:
   - job: Publish_NuGet_Internal
 
     pool:
-      vmImage: $(windowsPoolName)
+      vmImage: $(windowsHostedPoolName)
 
     workspace:
       clean: all # Cleanup the workspaca before starting
