@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 * [#23] Change target Uno.UI version to 4.0.7.
+* Updated Contributing documentation.
 
 ### Removed
 * Dropped support for uap10.0.18362
