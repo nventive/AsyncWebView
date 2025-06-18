@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Web.WebView2.Core;
 using Uno.Disposables;
 using Uno.Logging;
 using Windows.System;
@@ -150,11 +151,18 @@ public partial class AsyncWebView : Control
 
 	protected virtual bool OnNavigationStarting(NavigationStartingEventArgs args)
 	{
-		if (_logger.IsEnabled(LogLevel.Trace))
-		{
-			_logger.Trace($"Navigation '{args?.NavigationId}', to uri '{args?.Uri}', is starting.");
-		}
+		return true;
+	}
 
+	/// <summary>
+	/// This method is called when a new window is requested by the webview.
+	/// It can be overridden to perform custom actions and to control whether to cancel the new window request or not.
+	/// Return true to proceed with the new window, or false to cancel it.
+	/// </summary>
+	/// <param name="args">The argument from the <see cref="CoreWebView2.NewWindowRequested"/> event handler.</param>
+	/// <returns>A boolean indicating whether to proceed with the new window.</returns>
+	protected virtual bool OnNewWindowRequested(CoreWebView2NewWindowRequestedEventArgs args)
+	{
 		return true;
 	}
 
@@ -203,6 +211,16 @@ public partial class AsyncWebView : Control
 				_logger.LogInformation($"Handled the completed navigation '{args?.NavigationId}'.");
 			}
 		}
+	}
+
+	/// <summary>
+	/// This method is called when the history of the webview changes.
+	/// It can be overridden to perform custom actions when the history changes.
+	/// </summary>
+	/// <param name="currentSource">The current source of the webview.</param>
+	protected virtual void OnHistoryChanged(string currentSource)
+	{
+		return;
 	}
 
 	private void OnSourceChanged(object source)
@@ -361,14 +379,15 @@ public partial class AsyncWebView : Control
 		_webView.NavigationStarting += OnNavigationgStartingEvent;
 		_webView.NavigationCompleted += OnNavigationCompletedEvent;
 		_webView.CoreProcessFailed += OnNavigationFailedEvent;
-#if WINDOWS
 		_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () => {
 
-
 			await _webView.EnsureCoreWebView2Async();
+			_webView.CoreWebView2.HistoryChanged += OnHistoryChangedEvent;
+			_webView.CoreWebView2.NewWindowRequested += OnNewWindowRequestedEvent;
+#if WINDOWS
 			_webView.CoreWebView2.ScriptDialogOpening += OnScriptNotifyEvent;
-		});
 #endif
+		});
 
 
 		return Disposable.Create(() =>
@@ -376,11 +395,50 @@ public partial class AsyncWebView : Control
 			_webView.NavigationStarting -= OnNavigationgStartingEvent;
 			_webView.NavigationCompleted -= OnNavigationCompletedEvent;
 			_webView.CoreProcessFailed -= OnNavigationFailedEvent;
+			_webView.CoreWebView2.HistoryChanged -= OnHistoryChangedEvent;
+			_webView.CoreWebView2.NewWindowRequested -= OnNewWindowRequestedEvent;
 
 #if WINDOWS
 			_webView.CoreWebView2.ScriptDialogOpening -= OnScriptNotifyEvent;
 #endif
 		});
+	}
+
+	private void OnNewWindowRequestedEvent(CoreWebView2 sender, CoreWebView2NewWindowRequestedEventArgs args)
+	{
+		if (_logger.IsEnabled(LogLevel.Debug))
+		{
+			_logger.LogTrace("Checking whether to proceed with new window requested for uri '{Uri}'.", args?.Uri);
+		}
+
+		var shouldCancel = !OnNewWindowRequested(args);
+		if (shouldCancel)
+		{
+			args.Handled = true;
+
+			if (_logger.IsEnabled(LogLevel.Information))
+			{
+				_logger.LogInformation("New window request cancelled for uri '{Uri}'.", args.Uri);
+			}
+			return;
+		}
+		else
+		{
+			if (_logger.IsEnabled(LogLevel.Information))
+			{
+				_logger.LogInformation("New window request allowed for uri '{Uri}'.", args.Uri);
+			}
+		}
+	}
+
+	private void OnHistoryChangedEvent(CoreWebView2 sender, object args)
+	{
+		if (_logger.IsEnabled(LogLevel.Debug))
+		{
+			_logger.LogDebug("History changed. The current source is '{CurrentSource}'.", sender.Source);
+		}
+
+		OnHistoryChanged(sender.Source);
 	}
 
 	private void OnNavigationCompletedEvent(_WebView sender, NavigationCompletedEventArgs args)
@@ -412,10 +470,19 @@ public partial class AsyncWebView : Control
 	// This method has to be synchronous. Otherwise, changing the args.Cancel has no effect since it's evaluated synchronously.
 	private void ProcessNavigationStarting(NavigationStartingEventArgs args)
 	{
+		if (_logger.IsEnabled(LogLevel.Debug))
+		{
+			_logger.LogDebug("Checking whether to proceed with starting navigation '{NavigationId}' to uri '{Uri}'.", args?.NavigationId, args?.Uri);
+		}
+
 		var shouldStopNavigation = !OnNavigationStarting(args);
 		if (shouldStopNavigation)
 		{
 			args.Cancel = true;
+			if (_logger.IsEnabled(LogLevel.Debug))
+			{
+				_logger.LogDebug("Canceled navigation '{NavigationId}' to uri '{Uri}' based on the return value of the OnNavigationStarting override.", args?.NavigationId, args?.Uri);
+			}
 			return;
 		}
 
@@ -437,13 +504,17 @@ public partial class AsyncWebView : Control
 		// If the Uri is an action type ("tel:", "mailto:", etc), we ignore the navigation and open the appropriate app if any.
 		if (absoluteUri.IsUrlAction())
 		{
-
 			var isSchemeSupported = HandleLinkWithScheme(uri);
 
 			// If action type was handled, cancel navigation
 			if (isSchemeSupported)
 			{
 				args.Cancel = true;
+				if (_logger.IsEnabled(LogLevel.Debug))
+				{
+					_logger.LogDebug("Canceled navigation '{NavigationId}' to uri '{Uri}' because it was handled via the Launcher.", args?.NavigationId, args?.Uri);
+				}
+
 				return;
 			}
 		}
@@ -453,6 +524,10 @@ public partial class AsyncWebView : Control
 			if (NavigationMode != NavigationMode.Internal)
 			{
 				args.Cancel = true;
+				if (_logger.IsEnabled(LogLevel.Debug))
+				{
+					_logger.LogDebug("Canceled navigation '{NavigationId}' to uri '{Uri}' because NavigationMode is not Internal.", args?.NavigationId, args?.Uri);
+				}
 
 				if (NavigationMode == NavigationMode.Application)
 				{
@@ -479,6 +554,11 @@ public partial class AsyncWebView : Control
 					NavigationCommand.Execute(args.Uri);
 
 					args.Cancel = true;
+					if (_logger.IsEnabled(LogLevel.Debug))
+					{
+						_logger.LogDebug("Canceled navigation '{NavigationId}' to uri '{Uri}' because it was handled via NavigationCommand.", args?.NavigationId, args?.Uri);
+					}
+
 					return;
 				}
 			}

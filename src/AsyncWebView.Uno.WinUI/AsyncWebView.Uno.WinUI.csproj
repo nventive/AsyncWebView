@@ -1,6 +1,6 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
 	<PropertyGroup>
-		<TargetFrameworks>net7.0;net7.0-windows10.0.19041;net7.0-android;net7.0-ios;</TargetFrameworks>
+		<TargetFrameworks>net8.0;net8.0-windows10.0.19041;net8.0-android;net8.0-ios;</TargetFrameworks>
 		<LangVersion>11.0</LangVersion>
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
@@ -22,7 +22,7 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(TargetFramework)'=='net7.0'">
+	<PropertyGroup Condition="'$(TargetFramework)'=='net8.0'">
 		<DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
 	</PropertyGroup>
 
@@ -38,11 +38,17 @@
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 
+	<PropertyGroup Condition="'$(TargetFramework)'=='net8.0-windows10.0.19041'">
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+	</PropertyGroup>
+
+
 	<Choose>
 		<When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
 			<ItemGroup>
-				<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.2.230313.1" />
-				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+				<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.0" />
+				<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22000.24" />
+				<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22000.24" />
 			</ItemGroup>
 			<ItemGroup>
 				<!--
