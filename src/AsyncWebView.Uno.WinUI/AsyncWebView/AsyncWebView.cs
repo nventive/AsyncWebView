@@ -638,8 +638,9 @@ public partial class AsyncWebView : Control
 		_isLastErrorOnSource = !args.IsSuccess && _isUpdating;
 		_isUpdating = false;
 
-		if (args.IsSuccess)
+		if (args.IsSuccess || args.WebErrorStatus == CoreWebView2WebErrorStatus.OperationCanceled)
 		{
+			// We consider OperationCanceled as a successful navigation because we don't what to introduce a blank or error state when we simply return false in OnNavigationStarting.
 			OnNavigationSucceeded(args);
 		}
 		else
