@@ -254,12 +254,23 @@ public partial class AsyncWebView : Control
 		var sourceUri = source as Uri;
 		if (sourceUri != null)
 		{
-			_isUpdating = true;
+			// We need to check if the uri is the same because uris with the same base but different anchor are equal.
+			// When navigating to an anchor the WebView2 does not trigger any navigation event.
+			// For that reason we cannot set a loading state because we don't have a trigger to remove it later on.
+			if (sourceUri.Equals(_webView.Source))
+			{
+				NavigateToUri(sourceUri);
+				return;
+			}
+			else
+			{
+				_isUpdating = true;
 
-			UpdateVisualState(VisualStates.Loading);
-			NavigateToUri(sourceUri);
+				UpdateVisualState(VisualStates.Loading);
+				NavigateToUri(sourceUri);
 
-			return;
+				return;
+			}
 		}
 
 		var sourceHttpRequestMessage = source as HttpRequestMessage;
@@ -379,7 +390,8 @@ public partial class AsyncWebView : Control
 		_webView.NavigationStarting += OnNavigationgStartingEvent;
 		_webView.NavigationCompleted += OnNavigationCompletedEvent;
 		_webView.CoreProcessFailed += OnNavigationFailedEvent;
-		_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () => {
+		_ = _dispatcher.RunAsync(DispatcherQueuePriority.Normal, async () =>
+		{
 
 			await _webView.EnsureCoreWebView2Async();
 			_webView.CoreWebView2.HistoryChanged += OnHistoryChangedEvent;
