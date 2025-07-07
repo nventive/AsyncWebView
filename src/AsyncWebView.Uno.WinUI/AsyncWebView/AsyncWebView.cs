@@ -168,6 +168,15 @@ public partial class AsyncWebView : Control
 
 	protected virtual void OnNavigationSucceeded(NavigationCompletedEventArgs args)
 	{
+		if (_webView?.Source?.OriginalString == "about:blank")
+		{
+			if (_logger.IsEnabled(LogLevel.Debug))
+			{
+				_logger.LogDebug("Navigation to about:blank — skipping Ready state.");
+			}
+			return;
+		}
+
 		UpdateVisualState(VisualStates.Ready);
 
 		if (_logger.IsEnabled(LogLevel.Information))

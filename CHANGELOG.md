@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 0.7.3 (2025-07-07)
+- Fix the navigate to blank page replacing error state by ready state.
+
 ## 0.7.2 (2025-06-20)
 - Fix infinite loading when setting a source that is the same Uri with a new anchor.
 
