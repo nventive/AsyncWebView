@@ -1,4 +1,4 @@
-trigger:
+﻿trigger:
   branches:
     include:
     - master
@@ -14,7 +14,7 @@ variables:
   value: AsyncWebView.sln
 # Pool names
 - name: windowsHostedPoolName
-  value: 'windows-2022'
+  value: 'windows-2025'
 
 stages:
 - stage: Build

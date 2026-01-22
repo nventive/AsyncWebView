@@ -1,4 +1,9 @@
-﻿steps:
+﻿parameters:
+  DotNetVersion: '10.0.100'
+  UnoCheck_Version: '1.33.1'
+  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/3bd81468f842eb34fe4760d1694baf8e4ba6edba/manifests/uno.ui.manifest.json'
+
+steps:
 
 - task: gitversion/setup@0
   inputs:
@@ -15,12 +20,21 @@
   inputs:
     forceReinstallCredentialProvider: true
 
-- task: JavaToolInstaller@0
-  displayName: "Install Java SDK 11"
+- task: UseDotNet@2
+  displayName: 'Use .NET SDK ${{ parameters.DotNetVersion }}'
+  retryCountOnTaskFailure: 3
   inputs:
-    versionSpec: '11'
-    jdkArchitectureOption: 'x64'
-    jdkSourceOption: 'PreInstalled'
+    packageType: sdk
+    version: ${{ parameters.DotNetVersion }}
+    includePreviewVersions: true
+
+- powershell: |
+    & dotnet tool update --global uno.check --version ${{ parameters.UnoCheck_Version }} --add-source https://api.nuget.org/v3/index.json
+    & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip vswin --skip vsmac --skip androidsdk --skip androidemulator --manifest ${{ parameters.UnoCheck_Manifest }}
+  displayName: Uno-check
+  errorActionPreference: continue
+  ignoreLASTEXITCODE: true
+  retryCountOnTaskFailure: 3
 
 - task: MSBuild@1
   displayName: 'Restore solution packages'
